@@ -4,12 +4,14 @@ declare(strict_types = 1);
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-use BotMan\Drivers\Slack\Factory;
+use BotMan\BotMan\BotMan;
+use BotMan\BotMan\BotManFactory;
+use BotMan\Drivers\Slack\SlackDriver;
+use Workerman\Connection\TcpConnection;
 use Workerman\Worker;
 use Workerman\Lib\Timer;
 use Dotenv\Dotenv;
 use BotMan\BotMan\Drivers\DriverManager;
-use BotMan\Drivers\Slack\SlackRTMDriver;
 
 Dotenv::create(__DIR__)->load();
 
@@ -23,26 +25,36 @@ $task->onWorkerStart = function () {
     );
 };
 
-$port = getenv('WORKERMAN_PORT') ?? 6000;
-$io = new Worker("websocket://0.0.0.0:{$port}");
-$io->count = 1;
-$io->onWorkerStart = function () {
-    global $botman;
+DriverManager::loadDriver(SlackDriver::class);
 
-    $loop = Worker::getEventLoop();
-    DriverManager::loadDriver(SlackRTMDriver::class);
-
-    $botman = (new Factory)->createForRTM([
+$port = getenv('WORKERMAN_PORT') ?? 8000;
+$http = new Worker("http://0.0.0.0:{$port}");
+$http->count = 1;
+$http->onMessage = function (TcpConnection $connection, array $data) {
+    $botman = BotManFactory::create([
         'slack' => [
-            'token' => getenv('SLACK_TOKEN'),
+            'token' => getenv('SLACK_TOKEN')
         ],
-    ], $loop);
-};
-$io->onMessage = function($connection, $data) {
-    global $botman;
+        null,
+        new \Symfony\Component\HttpFoundation\Request(
+            $data['get'],
+            $data['post'],
+            [],
+            $data['cookie'],
+            $data['files'],
+            $data['server'],
+            []
+        )
+    ]);
 
-    dump(dump($data));
-    dump($connection);
+   /* $botman->fallback(function (BotMan $bot) {
+        $bot->reply('I heard you! :)');
+    });*/
+
+    $botman->listen();
+    $botman->reply('test');
+
+    $connection->send("hello world \n");
 };
 
 
