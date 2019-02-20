@@ -16,4 +16,4 @@ php index.php start
 ```
 
 ## Supported Job Sites 
-* 잡코리아[http://www.jobkorea.co.kr]
+* [잡코리아](http://www.jobkorea.co.kr)
