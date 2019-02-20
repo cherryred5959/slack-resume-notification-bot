@@ -1,0 +1,15 @@
+{
+    "name": "cherryred5959/slack-resume-notification-bot",
+    "type": "project",
+    "require": {
+        "workerman/workerman": "^3.5",
+        "vlucas/phpdotenv": "^3.3",
+        "botman/botman": "^2.4",
+        "react/stream": "^0.7.5"
+    },
+    "scripts": {
+        "post-root-package-install": [
+            "php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ]
+    }
+}

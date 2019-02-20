@@ -1,0 +1,14 @@
+version: '3.3'
+
+services:
+  php:
+    build:
+      dockerfile: Dockerfile
+      context: ./
+    tty: true
+    restart: always
+    network_mode: bridge
+    ports:
+      - 80:8000
+    volumes:
+      - ../:/var/www/html
