@@ -50,7 +50,7 @@ $task->onWorkerStart = function () {
                 }
 
                 $numberOfNonReads = (int) trim((clone $node)->filter('div.apyStatusBoard li.apyStatusNotRead a.itemNum')->first()->text());
-                if (! ($numberOfNonReads >= 0)) {
+                if (! ($numberOfNonReads > 0)) {
                     return null;
                 }
 
