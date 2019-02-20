@@ -7,6 +7,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 use Goutte\Client;
 use Slack\Channel;
 use Slack\Message\Attachment;
+use Slack\Message\AttachmentField;
 use Symfony\Component\DomCrawler\Crawler;
 use Workerman\Worker;
 use Workerman\Lib\Timer;
@@ -41,7 +42,7 @@ $task->onWorkerStart = function () {
 
             $jobAnnouncementPage = $goutteClient->request('GET', 'http://www.jobkorea.co.kr/Corp/GiMng/List');
 
-            $numberOfNonReadList = $jobAnnouncementPage->filter('form#form div.giListRow')->each(function (Crawler $node) {
+            $numberOfNonReadList = $jobAnnouncementPage->filter('form#form div.giListRow')->each(function (Crawler $node) use ($goutteClient) {
                 $jobAnnouncementNumber = trim((clone $node)->filter('div.jobTitWrap span.tahoma')->first()->text());
                 $selectedJobAnnouncementNumbers = explode(',', getenv('JOBKOREA_JOB_ANNOUNCEMENT_NUMBERS'));
 
@@ -54,9 +55,21 @@ $task->onWorkerStart = function () {
                     return null;
                 }
 
+                $resumePage = $goutteClient->click((clone $node)->filter('div.apyStatusBoard li.apyStatusNotRead a.itemNum')->first()->link());
+                $gno = (clone $resumePage)->filter('input[name=GI_No]')->attr('value');
+                $query = http_build_query(['GI_No' => $gno]);
+
+                $resumes = (clone $resumePage)->filter('div.schListWrap div.mtcSchListTb tbody tr:not(.infoBx)')->each(function (Crawler $node) use ($query) {
+                    return [
+                        'name' => trim((clone $node)->filter('span.name')->first()->text()),
+                        'age' => trim((clone $node)->filter('span.nmAge')->first()->text()),
+                        'link' => (clone $node)->filter('a.devTypeAplctHref')->first()->link()->getUri() . "&{$query}",
+                    ];
+                });
+
                 $title = trim((clone $node)->filter('div.jobTitWrap a.tit')->first()->text());
 
-                return compact('jobAnnouncementNumber', 'numberOfNonReads', 'title');
+                return compact('jobAnnouncementNumber', 'numberOfNonReads', 'title', 'resumes');
             });
 
             $numberOfNonReadList = array_filter($numberOfNonReadList, function ($numberOfNonRead) {
@@ -91,7 +104,11 @@ $task->onWorkerStart = function () {
                             $numberOfNonRead['title'],
                             "{$numberOfNonRead['numberOfNonReads']}건",
                             null,
-                            'danger'
+                            'danger',
+                            null,
+                            array_map(function (array $resume) {
+                                return new AttachmentField("{$resume['name']}({$resume['age']})", "<{$resume['link']}|이력서 보러 가기>", true);
+                            }, $numberOfNonRead['resumes'])
                         ));
                     }
 
