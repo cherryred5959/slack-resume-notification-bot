@@ -17,3 +17,7 @@ php index.php start
 
 ## Supported Job Sites 
 * [잡코리아](http://www.jobkorea.co.kr)
+
+## Note
+* https://github.com/walkor/Workerman
+* https://api.slack.com/bot-users
