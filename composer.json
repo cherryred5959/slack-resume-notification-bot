@@ -4,8 +4,7 @@
     "require": {
         "workerman/workerman": "^3.5",
         "vlucas/phpdotenv": "^3.3",
-        "botman/botman": "^2.4",
-        "react/stream": "^0.7.5"
+        "mpociot/slack-client": "^1.2"
     },
     "scripts": {
         "post-root-package-install": [
