@@ -97,7 +97,7 @@ $task->onWorkerStart = function () {
                 ->then(function (Channel $channel) use ($client, $numberOfNonReadList) {
                     $message = $client->getMessageBuilder()
                         ->setChannel($channel)
-                        ->setText('넌 내꺼야!, 새로운 포켓몬 후보가 있습니다.');
+                        ->setText(getenv('NOTIFICATION_MESSAGE') ?? '새로운 미열람 이력서가 있습니다.');
 
                     foreach ($numberOfNonReadList as $numberOfNonRead) {
                         $message->addAttachment(new Attachment(
