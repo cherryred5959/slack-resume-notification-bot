@@ -7,7 +7,6 @@
 git clone https://github.com/cherryred5959/instagram-tag-scraper.git
 cd instagram-tag-scraper/docker
 docker-compose up -d --build
-cd ../
 docker-compose exec php bash
 cd /var/www/html
 composer post-root-package-install
