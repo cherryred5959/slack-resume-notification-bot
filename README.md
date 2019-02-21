@@ -11,7 +11,7 @@ docker-compose exec php bash
 cd /var/www/html
 composer post-root-package-install
 composer install
-php index.php start
+php index.php start -d
 ```
 
 ## Supported Job Sites 
