@@ -9,7 +9,7 @@ cd instagram-tag-scraper/docker
 docker-compose up -d --build
 docker-compose exec php bash
 cd /var/www/html
-composer post-root-package-install
+composer run post-root-package-install
 composer install
 php index.php start -d
 ```
