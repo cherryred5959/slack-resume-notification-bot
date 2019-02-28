@@ -1,6 +1,10 @@
-FROM php:7.3.2-cli-alpine3.9
+FROM php:7.2.15-cli-alpine3.9
+
 
 RUN apk --no-cache add --virtual .composer-rundeps git subversion openssh mercurial tini bash patch make zip unzip
+
+
+RUN apk add --no-cache $PHPIZE_DEPS
 
 RUN apk add --no-cache --virtual .build-deps zlib-dev libzip-dev libevent-dev \
  && docker-php-ext-configure zip --with-libzip \
@@ -15,6 +19,9 @@ RUN apk add --no-cache --virtual .build-deps zlib-dev libzip-dev libevent-dev \
  && apk del .build-deps
 
 RUN docker-php-ext-install pcntl
+
+RUN pecl install xdebug-2.6.1
+RUN docker-php-ext-enable xdebug
 
 ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV COMPOSER_HOME /tmp
