@@ -27,9 +27,7 @@ $task->onWorkerStart = function () {
         getenv('WORKERMAN_TIME_INTERVAL') ?? 300,
         function () use ($loop) {
             $client = (new Client())->setClient(
-                new GuzzleClient([
-                    'timeout' => 3,
-                ])
+                new GuzzleClient()
             );
 
             (new SlackBotManager(
@@ -43,6 +41,8 @@ $task->onWorkerStart = function () {
                     $client
                 )
             )->run(explode(',', getenv('JOBKOREA_JOB_ANNOUNCEMENT_NUMBERS')));
+
+            gc_collect_cycles();
         }
     );
 };
