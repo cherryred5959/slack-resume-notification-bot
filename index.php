@@ -30,8 +30,11 @@ $task->onWorkerStart = function () {
                 new GuzzleClient()
             );
 
+            $slackClient = new ApiClient($loop);
+            $slackClient->setToken(getenv('SLACK_TOKEN'));
+
             (new SlackBotManager(
-                new ApiClient($loop),
+                $slackClient,
                 getenv('SLACK_CHANNEL'),
                 getenv('NOTIFICATION_MESSAGE')
             ))->addDriver(
