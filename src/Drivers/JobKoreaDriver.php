@@ -113,7 +113,7 @@ class JobKoreaDriver implements Driver
 
         $numberOfNonReadList = $jobAnnouncements->each(function (Crawler $node) use ($channels) {
             $jobAnnouncementNumber = $this->getJobAnnouncementNumber($node);
-            if (! in_array($jobAnnouncementNumber, $channels, true)) {
+            if (! in_array($jobAnnouncementNumber, $channels)) {
                 return null;
             }
 
