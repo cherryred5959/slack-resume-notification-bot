@@ -67,6 +67,11 @@ class SlackBotManager
     {
         foreach ($this->drivers as $driver) {
             $data =  $driver->newNotificationMessageData($channels);
+
+            if (empty($data)) {
+                continue;
+            }
+
             $this->client->getChannelByName($this->channelName)->then(function (Channel $channel) use ($data) {
                 $data['channel'] = $channel->getId();
                 $data['text'] = $this->messageTitle;
