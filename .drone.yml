@@ -1,0 +1,5 @@
+pipeline:
+  notify:
+    image: plugins/slack
+    webhook:
+      from_secret: slack_webhook
