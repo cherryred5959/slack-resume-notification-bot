@@ -4,8 +4,8 @@
 
 ## Usage
 ```
-git clone https://github.com/cherryred5959/instagram-tag-scraper.git
-cd instagram-tag-scraper/docker
+git clone git@github.com:cherryred5959/slack-resume-notification-bot.git
+cd slack-resume-notification-bot/docker
 docker-compose up -d --build
 docker-compose exec php bash
 cd /var/www/html
